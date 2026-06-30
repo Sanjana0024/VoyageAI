@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from app.agents.travel_agent import travel_agent
+from app.graph.travel_graph import create_travel_graph
 
 
 app = FastAPI(
@@ -14,6 +14,10 @@ class TravelRequest(BaseModel):
     user_input: str
 
 
+# Create LangGraph workflow
+travel_graph = create_travel_graph()
+
+
 @app.get("/")
 def home():
     return {
@@ -24,10 +28,22 @@ def home():
 @app.post("/plan")
 def plan_trip(request: TravelRequest):
 
-    result = travel_agent(
-        request.user_input
+    initial_state = {
+        "user_request": request.user_input,
+
+        "destination": "",
+        "budget": "",
+        "weather": "",
+        "activities": "",
+        "itinerary": ""
+    }
+
+
+    result = travel_graph.invoke(
+        initial_state
     )
 
+
     return {
-        "travel_plan": result
+        "travel_plan": result["itinerary"]
     }
