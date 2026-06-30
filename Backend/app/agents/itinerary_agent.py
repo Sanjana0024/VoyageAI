@@ -1,48 +1,47 @@
+import json
 from app.config import llm
 
 
 def itinerary_agent(state):
     """
-    Final agent that combines all information
-    and generates complete travel itinerary.
+    Final agent that generates structured JSON itinerary.
     """
 
     prompt = f"""
-    You are a professional travel itinerary creator.
+Return ONLY valid JSON. No explanations, no markdown.
 
-    Create a complete travel plan using the information below.
+Schema:
+{{
+  "trip_summary": "",
+  "total_budget": "",
+  "day_wise_plan": [],
+  "places_to_visit": [],
+  "activities": [],
+  "food": [],
+  "travel_tips": []
+}}
 
-    User Request:
-    {state['user_request']}
-
-    Destination Information:
-    {state['destination']}
-
-    Budget Information:
-    {state['budget']}
-
-    Weather Information:
-    {state['weather']}
-
-    Activities Information:
-    {state['activities']}
-
-
-    Create a detailed final itinerary including:
-
-    1. Trip summary
-    2. Total estimated budget
-    3. Day-wise plan
-    4. Places to visit
-    5. Activities
-    6. Food recommendations
-    7. Travel tips
-
-    Make it realistic and easy for a traveler to follow.
-    """
+Input:
+User Request: {state['user_request']}
+Destination: {state['destination']}
+Budget: {state['budget']}
+Weather: {state['weather']}
+Activities: {state['activities']}
+"""
 
     response = llm.invoke(prompt)
 
-    state["itinerary"] = response.content
+    # Extract text safely
+    content = response.content
+
+    try:
+        parsed = json.loads(content)
+    except Exception:
+        # fallback if model returns messy output
+        parsed = {
+            "raw_output": content
+        }
+
+    state["itinerary"] = parsed
 
     return state
