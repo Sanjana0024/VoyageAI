@@ -64,39 +64,32 @@ def home():
 @app.post("/plan")
 def plan_trip(request: TravelRequest):
 
-
     initial_state = {
-
         "user_request": request.user_input,
-
         "destination": "",
-
         "budget": "",
-
         "weather": "",
-
         "activities": "",
-
         "itinerary": {}
-
     }
 
+    try:
+        result = travel_graph.invoke(initial_state)
 
+        print("FINAL RESULT:")
+        print(result)
 
-    result = travel_graph.invoke(
-        initial_state
-    )
+        return {
+            "status": "success",
+            "data": result["itinerary"]
+        }
 
-
-    return {
-
-        "status": "success",
-
-        "data": result["itinerary"]
-
-    }
-
-
+    except Exception as e:
+        print("ERROR:", str(e))
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
 
 
 
@@ -105,89 +98,50 @@ def plan_trip(request: TravelRequest):
 # -------------------------
 
 @app.post("/plan-stream")
-async def plan_trip_stream(
-    request: TravelRequest
-):
-
+async def plan_trip_stream(request: TravelRequest):
 
     initial_state = {
-
-
         "user_request": request.user_input,
-
         "destination": "",
-
         "budget": "",
-
         "weather": "",
-
         "activities": "",
-
         "itinerary": {}
-
     }
-
 
 
     async def event_stream():
 
-
-        yield "🚀 Starting VoyageAI...\n"
-
-        await asyncio.sleep(0.5)
+        yield "🚀 VoyageAI started...\n"
 
 
-
-        # Stream LangGraph nodes
-
-        for event in travel_graph.stream(
-            initial_state
-        ):
-
+        for event in travel_graph.stream(initial_state):
 
             for node, data in event.items():
 
+                if node == "destination":
+                    yield "📍 Destination Agent completed...\n"
 
-                yield (
-                    f"🤖 {node} agent completed...\n"
-                )
+                elif node == "budget":
+                    yield "💰 Budget Agent completed...\n"
+
+                elif node == "weather":
+                    yield "🌤 Weather Agent completed...\n"
+
+                elif node == "activities":
+                    yield "🎯 Activity Agent completed...\n"
+
+                elif node == "itinerary":
+                    yield "📅 Itinerary Agent completed...\n"
 
 
                 await asyncio.sleep(0.5)
 
 
-
-
-        # Final result
-
-        result = await asyncio.to_thread(
-
-            travel_graph.invoke,
-
-            initial_state
-
-        )
-
-
-        yield "\n📅 Final itinerary generated...\n\n"
-
-
-
-        yield json.dumps(
-
-            result["itinerary"],
-
-            indent=2
-
-        )
-
-
+        yield "✅ All AI Agents completed 🚀\n"
 
 
     return StreamingResponse(
-
         event_stream(),
-
         media_type="text/plain"
-
     )

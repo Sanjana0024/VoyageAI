@@ -66,46 +66,29 @@ function App() {
 
 
   // Streaming agent execution
-  const handleStreamGenerate = async () => {
-
-
-    if (!input) return;
-
+ const handleStreamGenerate = async () => {
 
     setMessages([]);
-
-    setTrip(null);
 
     setLoading(true);
 
 
-
     await streamTrip(
+        input,
+        (message)=>{
 
-      input,
+            setMessages(prev=>[
+                ...prev,
+                message
+            ]);
 
-      (message)=>{
-
-
-        setMessages((previous)=>[
-
-          ...previous,
-
-          message
-
-        ]);
-
-
-      }
-
+        }
     );
 
 
     setLoading(false);
 
-
-  };
-
+};
 
 
 

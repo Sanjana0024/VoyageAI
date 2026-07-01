@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Any
 
 from langgraph.graph import StateGraph, END
 
@@ -18,7 +18,7 @@ class TravelState(TypedDict):
     budget: str
     weather: str
     activities: str
-    itinerary: str
+    itinerary: Any
 
 
 
@@ -27,8 +27,7 @@ def create_travel_graph():
     graph = StateGraph(TravelState)
 
 
-    # Add agents as nodes
-
+    # Agents
     graph.add_node(
         "destination",
         destination_agent
@@ -55,7 +54,7 @@ def create_travel_graph():
     )
 
 
-    # Define execution flow
+    # Flow
 
     graph.set_entry_point(
         "destination"
