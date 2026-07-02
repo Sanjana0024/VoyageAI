@@ -19,10 +19,11 @@ function App() {
 
 
 
-  // Normal AI plan generation
+  // Generate normal AI travel plan
   const handleGenerate = async () => {
 
-    if (!input) return;
+
+    if (!input.trim()) return;
 
 
     setLoading(true);
@@ -31,6 +32,7 @@ function App() {
 
     try {
 
+
       const response = await generateTrip({
 
         user_input: input
@@ -38,10 +40,12 @@ function App() {
       });
 
 
+
       console.log(
         "Backend Response:",
         response.data
       );
+
 
 
       setTrip(
@@ -51,44 +55,73 @@ function App() {
 
     }
 
+
     catch(error){
 
-      console.log(error);
+
+      console.log(
+        "API Error:",
+        error
+      );
+
 
     }
 
 
-    setLoading(false);
+    finally{
+
+      setLoading(false);
+
+    }
+
 
   };
 
 
 
 
-  // Streaming agent execution
- const handleStreamGenerate = async () => {
+
+  // Stream AI agents progress
+  const handleStreamGenerate = async () => {
+
+
+    if (!input.trim()) return;
+
 
     setMessages([]);
 
     setLoading(true);
 
 
+
     await streamTrip(
-        input,
-        (message)=>{
 
-            setMessages(prev=>[
-                ...prev,
-                message
-            ]);
+      input,
 
-        }
+      (message)=>{
+
+
+        setMessages((prev)=>[
+
+          ...prev,
+          message
+
+        ]);
+
+
+      }
+
     );
+
 
 
     setLoading(false);
 
-};
+
+  };
+
+
+
 
 
 
@@ -144,6 +177,7 @@ function App() {
 
 
 
+
         <textarea
 
           className="
@@ -178,11 +212,13 @@ function App() {
 
 
 
+
         <div className="
           flex
           gap-4
           mt-5
         ">
+
 
 
           <button
@@ -203,6 +239,7 @@ function App() {
             Generate Plan 🚀
 
           </button>
+
 
 
 
@@ -235,6 +272,7 @@ function App() {
 
 
 
+
         {
           loading && (
 
@@ -244,6 +282,7 @@ function App() {
               rounded-xl
               p-5
             ">
+
 
 
               <h2 className="
@@ -258,10 +297,12 @@ function App() {
 
 
 
+
               {
                 messages.map(
 
                   (msg,index)=>(
+
 
                     <p
 
@@ -279,16 +320,34 @@ function App() {
 
                     </p>
 
+
                   )
 
                 )
+
               }
+
+
+
+
+              {
+                messages.length === 0 && (
+
+                  <p className="text-gray-500">
+                    Starting AI agents...
+                  </p>
+
+                )
+              }
+
 
 
             </div>
 
           )
         }
+
+
 
 
 
@@ -306,6 +365,8 @@ function App() {
 
           )
         }
+
+
 
 
 

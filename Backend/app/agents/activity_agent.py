@@ -2,35 +2,22 @@ from app.config import llm
 
 
 def activity_agent(state):
-    """
-    Agent responsible for recommending activities
-    and experiences at the destination.
-    """
 
     prompt = f"""
-    You are an expert travel activity planner.
+You are a travel activity planner.
 
-    User travel request:
-    {state['user_request']}
+Destination:
+{state['destination']}
 
-    Selected destination:
-    {state['destination']}
+Suggest:
 
-    Weather information:
-    {state['weather']}
+- Adventure activities
+- Famous places
+- Local experiences
+- Must try things
 
-    Suggest activities and experiences.
-
-    Include:
-
-    1. Adventure activities
-    2. Famous places to visit
-    3. Local experiences
-    4. Activities suitable according to budget
-    5. Things the traveler should not miss
-
-    Make recommendations practical.
-    """
+Keep response concise.
+"""
 
     response = llm.invoke(prompt)
 

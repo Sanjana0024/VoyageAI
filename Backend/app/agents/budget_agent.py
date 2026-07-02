@@ -2,30 +2,27 @@ from app.config import llm
 
 
 def budget_agent(state):
-    """
-    Agent responsible for analyzing trip budget.
-    """
 
     prompt = f"""
-    You are an expert travel budget planner.
+You are a travel budget planner.
 
-    User travel request:
-    {state['user_request']}
+User request:
+{state['user_request']}
 
-    Selected destination:
-    {state['destination']}
+Destination:
+{state['destination']}
 
-    Analyze the budget and provide:
+Return a short budget summary.
 
-    1. Estimated transportation cost
-    2. Accommodation cost
-    3. Food cost
-    4. Activities cost
-    5. Total estimated budget
-    6. Suggestions to save money
+Include:
+- Transport cost
+- Stay cost
+- Food cost
+- Activities cost
+- Total estimated cost
 
-    Keep the plan realistic.
-    """
+Keep response under 200 words.
+"""
 
     response = llm.invoke(prompt)
 

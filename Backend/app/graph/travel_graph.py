@@ -18,6 +18,7 @@ class TravelState(TypedDict):
     budget: str
     weather: str
     activities: str
+
     itinerary: Any
 
 
