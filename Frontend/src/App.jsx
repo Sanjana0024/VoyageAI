@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { generateTrip } from "./services/api";
 import { streamTrip } from "./services/stream";
 
 import TravelCard from "./components/TravelCard";
-
+import HistorySidebar from "./components/HistorySidebar";
 
 function App() {
-
 
   const [input, setInput] = useState("");
 
@@ -17,21 +16,33 @@ function App() {
 
   const [loading, setLoading] = useState(false);
 
+  const [history, setHistory] = useState([]);
 
 
-  // Generate normal AI travel plan
+  // Load history from localStorage
+  useEffect(() => {
+
+    const savedHistory =
+      JSON.parse(
+        localStorage.getItem("voyage_history")
+      ) || [];
+
+    setHistory(savedHistory);
+
+  }, []);
+
+
+
+  // Generate AI Trip
   const handleGenerate = async () => {
 
-
-    if (!input.trim()) return;
-
+    if (!input) return;
 
     setLoading(true);
+
     setTrip(null);
 
-
     try {
-
 
       const response = await generateTrip({
 
@@ -39,148 +50,161 @@ function App() {
 
       });
 
-
-
       console.log(
         "Backend Response:",
         response.data
       );
 
+      const tripData = response.data.data;
 
+      setTrip(tripData);
 
-      setTrip(
-        response.data.data
+      const newTrip = {
+
+        id: Date.now(),
+
+        title: tripData.trip_summary,
+
+        date: new Date().toLocaleDateString(),
+
+        trip: tripData
+
+      };
+
+      const updatedHistory = [
+        newTrip,
+        ...history
+      ];
+
+      setHistory(updatedHistory);
+
+      localStorage.setItem(
+
+        "voyage_history",
+
+        JSON.stringify(updatedHistory)
+
       );
 
+    }
+
+    catch (error) {
+
+      console.log(error);
 
     }
 
-
-    catch(error){
-
-
-      console.log(
-        "API Error:",
-        error
-      );
-
-
-    }
-
-
-    finally{
-
-      setLoading(false);
-
-    }
-
+    setLoading(false);
 
   };
 
 
 
-
-
-  // Stream AI agents progress
+  // Streaming AI
   const handleStreamGenerate = async () => {
-
-
-    if (!input.trim()) return;
-
 
     setMessages([]);
 
     setLoading(true);
 
-
-
     await streamTrip(
 
       input,
 
-      (message)=>{
+      (message) => {
 
-
-        setMessages((prev)=>[
+        setMessages(prev => [
 
           ...prev,
+
           message
 
         ]);
-
 
       }
 
     );
 
-
-
     setLoading(false);
-
 
   };
 
 
 
+  // Open old trip
+  const openHistoryTrip = (trip) => {
+
+    setTrip(trip.trip);
+
+  };
+
+
+
+  // Start new trip
+  const createNewTrip = () => {
+
+    setTrip(null);
+
+    setInput("");
+
+  };
 
 
 
   return (
 
+    <div className="min-h-screen flex bg-gray-100">
 
-    <div className="
-      min-h-screen
-      flex
-      justify-center
-      items-center
-      bg-gradient-to-br
-      from-blue-50
-      to-purple-100
-      p-6
-    ">
+      <HistorySidebar
 
+        history={history}
 
-      <div className="
-        w-full
-        max-w-4xl
-        bg-white
-        rounded-2xl
-        shadow-xl
-        p-8
-      ">
+        onSelect={openHistoryTrip}
+
+        onNewTrip={createNewTrip}
+
+      />
 
 
 
-        <h1 className="
-          text-4xl
-          font-bold
-          text-center
-          text-blue-600
-        ">
+      <div className="flex-1 p-8">
 
-          🚀 VoyageAI
-
-        </h1>
-
-
-
-        <p className="
-          text-center
-          text-gray-500
-          mt-2
-        ">
-
-          Multi-Agent AI Travel Planner
-
-        </p>
-
-
-
-
-
-        <textarea
-
+        <div
           className="
+          w-full
+          max-w-5xl
+          mx-auto
+          bg-white
+          rounded-2xl
+          shadow-xl
+          p-8
+          "
+        >
+
+          <h1
+            className="
+            text-4xl
+            font-bold
+            text-center
+            text-blue-600
+            "
+          >
+            🚀 VoyageAI
+          </h1>
+
+          <p
+            className="
+            text-center
+            text-gray-500
+            mt-2
+            "
+          >
+            Multi-Agent AI Travel Planner
+          </p>
+
+          <textarea
+
+            className="
             mt-8
             w-full
             h-32
@@ -191,196 +215,149 @@ function App() {
             focus:outline-none
             focus:ring-2
             focus:ring-blue-400
-          "
+            "
 
+            placeholder="
+Plan a 5 day adventure trip to Manali under ₹30000
+"
 
-          placeholder="
-          Example:
-          Plan a 5 day adventure trip to Manali under ₹30000
-          "
+            value={input}
 
+            onChange={(e) =>
 
-          value={input}
+              setInput(e.target.value)
 
+            }
 
-          onChange={(e)=>setInput(e.target.value)}
-
-
-        />
-
-
-
-
-
-
-        <div className="
-          flex
-          gap-4
-          mt-5
-        ">
-
-
-
-          <button
-
-            onClick={handleGenerate}
-
+          />
+                    <div
             className="
+            flex
+            gap-4
+            mt-5
+            "
+          >
+
+            <button
+
+              onClick={handleGenerate}
+
+              className="
               flex-1
               bg-blue-600
               text-white
               py-3
               rounded-xl
               hover:bg-blue-700
-            "
+              transition
+              "
 
-          >
+            >
 
-            Generate Plan 🚀
+              Generate Plan 🚀
 
-          </button>
-
-
-
+            </button>
 
 
-          <button
 
-            onClick={handleStreamGenerate}
+            <button
 
-            className="
+              onClick={handleStreamGenerate}
+
+              className="
               flex-1
               bg-purple-600
               text-white
               py-3
               rounded-xl
               hover:bg-purple-700
-            "
+              transition
+              "
 
-          >
+            >
 
-            Watch AI Agents 🤖
+              Watch AI Agents 🤖
 
-          </button>
+            </button>
 
-
-
-        </div>
-
+          </div>
 
 
 
+          {
+            loading && (
+
+              <div
+                className="
+                mt-6
+                bg-gray-50
+                rounded-xl
+                p-5
+                "
+              >
+
+                <h2
+                  className="
+                  font-bold
+                  text-lg
+                  mb-3
+                  "
+                >
+
+                  🤖 AI Agents Working
+
+                </h2>
 
 
+                {
+                  messages.map(
 
-        {
-          loading && (
+                    (msg, index) => (
 
-            <div className="
-              mt-6
-              bg-gray-50
-              rounded-xl
-              p-5
-            ">
+                      <p
 
+                        key={index}
 
-
-              <h2 className="
-                font-bold
-                text-lg
-                mb-3
-              ">
-
-                🤖 AI Agents Working
-
-              </h2>
-
-
-
-
-              {
-                messages.map(
-
-                  (msg,index)=>(
-
-
-                    <p
-
-                      key={index}
-
-                      className="
+                        className="
                         text-gray-700
                         animate-pulse
                         mb-2
-                      "
+                        "
 
-                    >
+                      >
 
-                      {msg}
+                        {msg}
 
-                    </p>
+                      </p>
 
+                    )
 
                   )
+                }
 
-                )
+              </div>
 
-              }
-
-
-
-
-              {
-                messages.length === 0 && (
-
-                  <p className="text-gray-500">
-                    Starting AI agents...
-                  </p>
-
-                )
-              }
+            )
+          }
 
 
 
-            </div>
+          <TravelCard
 
-          )
-        }
+            data={trip}
 
+            loading={loading}
 
+          />
 
-
-
-
-
-
-        {
-          trip && (
-
-            <TravelCard
-
-              data={trip}
-
-            />
-
-          )
-        }
-
-
-
-
-
+        </div>
 
       </div>
 
-
     </div>
-
 
   );
 
-
 }
-
 
 export default App;
