@@ -29,22 +29,73 @@ function TravelCard({ data, loading }) {
   return (
     <div className="mt-8 max-w-4xl mx-auto space-y-6">
 
-      {/* 🌍 HEADER */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="backdrop-blur-xl bg-white/70 border rounded-2xl p-6 shadow-lg"
-      >
-        <h2 className="text-3xl font-bold text-blue-600">
-          🌍 Trip Summary
-        </h2>
+      {/* 🌄 HERO SECTION */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5 }}
+  className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 text-white shadow-2xl p-8"
+>
 
-        <p className="mt-3 text-gray-700">{data.trip_summary}</p>
+  {/* Decorative circles */}
+  <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+  <div className="absolute -bottom-16 -left-10 w-52 h-52 bg-white/10 rounded-full"></div>
 
-        <p className="mt-4 text-lg font-semibold text-gray-800">
-          💰 Budget: ₹{data.total_budget}
-        </p>
-      </motion.div>
+  <div className="relative z-10">
+
+    <span className="inline-block px-4 py-1 rounded-full bg-white/20 text-sm font-medium backdrop-blur-md">
+      ✨ AI Generated Itinerary
+    </span>
+
+    <h2 className="text-4xl font-extrabold mt-4 leading-tight">
+      {data.trip_summary}
+    </h2>
+
+    <p className="mt-3 text-blue-100 max-w-2xl">
+      Sit back and relax! VoyageAI has crafted a personalized travel
+      itinerary based on your preferences, budget, and interests.
+    </p>
+
+    {/* Stats */}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+
+      <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center">
+        <p className="text-3xl">💰</p>
+        <p className="text-sm text-blue-100 mt-2">Budget</p>
+        <h3 className="font-bold text-lg">
+          ₹{data.total_budget}
+        </h3>
+      </div>
+
+      <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center">
+        <p className="text-3xl">📅</p>
+        <p className="text-sm text-blue-100 mt-2">Days</p>
+        <h3 className="font-bold text-lg">
+          {data.day_wise_plan?.length || 0}
+        </h3>
+      </div>
+
+      <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center">
+        <p className="text-3xl">📍</p>
+        <p className="text-sm text-blue-100 mt-2">Places</p>
+        <h3 className="font-bold text-lg">
+          {data.places_to_visit?.length || 0}
+        </h3>
+      </div>
+
+      <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 text-center">
+        <p className="text-3xl">🎯</p>
+        <p className="text-sm text-blue-100 mt-2">Activities</p>
+        <h3 className="font-bold text-lg">
+          {data.activities?.length || 0}
+        </h3>
+      </div>
+
+    </div>
+
+  </div>
+
+</motion.div>
 
       {/* 📍 PLACES */}
       {data.places_to_visit?.length > 0 && (
@@ -80,7 +131,19 @@ function TravelCard({ data, loading }) {
               <motion.div
                 key={index}
                 layout
-                className="backdrop-blur-xl bg-white/70 border rounded-2xl shadow-md overflow-hidden"
+                className="
+relative
+overflow-hidden
+rounded-3xl
+border
+border-gray-200
+bg-white
+shadow-lg
+hover:shadow-2xl
+hover:-translate-y-1
+transition-all
+duration-300
+"
               >
 
                 {/* HEADER */}
@@ -90,12 +153,31 @@ function TravelCard({ data, loading }) {
                   }
                   className="p-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 transition"
                 >
-                  <h4 className="font-bold text-lg">
-                    Day {day.day} 📍 {day.location}
-                  </h4>
+                  <div className="flex items-center gap-4">
 
-                  <span>{isOpen ? "▲" : "▼"}</span>
-                </div>
+  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold shadow-lg">
+    {day.day}
+  </div>
+
+  <div>
+    <h4 className="font-bold text-lg">
+      Day {day.day}
+    </h4>
+
+    <p className="text-gray-500">
+      📍 {day.location}
+    </p>
+  </div>
+
+</div>
+
+<motion.div
+  animate={{ rotate: isOpen ? 180 : 0 }}
+  transition={{ duration: 0.25 }}
+>
+  ⌄
+</motion.div>
+</div>
 
                 {/* CONTENT */}
                 <AnimatePresence>
