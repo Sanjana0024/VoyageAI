@@ -78,7 +78,7 @@ Budget Information:
 {state['budget']}
 
 Weather Information:
-{state['weather']}
+json.dumps(state["weather"])
 
 Activity Information:
 {state['activities']}

@@ -16,7 +16,7 @@ class TravelState(TypedDict):
 
     destination: str
     budget: str
-    weather: str
+    weather: dict
     activities: str
 
     itinerary: Any

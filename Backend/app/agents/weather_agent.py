@@ -1,34 +1,42 @@
 from app.config import llm
+import json
 
 def weather_agent(state):
 
-    print("Weather Agent Started")
-    print("State Before:", state)
-
     prompt = f"""
-You are an expert travel weather advisor.
+You are a travel weather expert.
 
-User travel request:
+Return ONLY valid JSON:
+
+{{
+  "condition": "",
+  "temperature": "",
+  "best_time": "",
+  "packing": [],
+  "tips": []
+}}
+
+User Request:
 {state['user_request']}
 
-Selected destination:
+Destination:
 {state['destination']}
-
-Provide:
-
-1. Expected weather conditions
-2. Best months to visit
-3. Clothes/items to carry
-4. Travel precautions
-
-Keep the response concise.
 """
 
     response = llm.invoke(prompt)
+    content = response.content
 
-    state["weather"] = response.content
+    try:
+        parsed = json.loads(content)
+    except:
+        parsed = {
+            "condition": "Unknown",
+            "temperature": "N/A",
+            "best_time": "N/A",
+            "packing": [],
+            "tips": []
+        }
 
-    print("Weather Added")
-    print(state)
+    state["weather"] = parsed
 
     return state

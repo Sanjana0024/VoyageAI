@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import TravelMap from "./TravelMap";
 
 function TravelCard({ data, loading }) {
   const [openDay, setOpenDay] = useState(null);
@@ -182,6 +183,63 @@ function TravelCard({ data, loading }) {
         </motion.div>
 
       )}
+
+      {/* 🌤 WEATHER CARD */}
+{data.weather && (
+  <div className="mt-6 backdrop-blur-xl bg-white/70 border rounded-2xl p-6 shadow-md">
+
+    <h3 className="text-xl font-bold mb-4">
+      🌤 Weather Info
+    </h3>
+
+    <div className="grid grid-cols-2 gap-4">
+
+      <div className="p-4 bg-blue-50 rounded-xl">
+        <p className="text-sm text-gray-500">Condition</p>
+        <p className="font-bold text-blue-700">
+          {data.weather.condition}
+        </p>
+      </div>
+
+      <div className="p-4 bg-purple-50 rounded-xl">
+        <p className="text-sm text-gray-500">Temperature</p>
+        <p className="font-bold text-purple-700">
+          {data.weather.temperature}
+        </p>
+      </div>
+
+      <div className="p-4 bg-green-50 rounded-xl col-span-2">
+        <p className="text-sm text-gray-500">Best Time</p>
+        <p className="font-bold text-green-700">
+          {data.weather.best_time}
+        </p>
+      </div>
+
+    </div>
+    {/* 🗺 MAP SECTION */}
+{data.places_to_visit?.length > 0 && (
+  <TravelMap places={data.places_to_visit} />
+)}
+
+    {/* Packing */}
+    {data.weather.packing?.length > 0 && (
+      <div className="mt-4">
+        <p className="font-semibold">🧥 What to Pack</p>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {data.weather.packing.map((item, i) => (
+            <span
+              key={i}
+              className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+)}
 
       {/* DAY WISE PLAN */}
 

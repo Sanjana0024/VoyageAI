@@ -120,25 +120,22 @@ async def plan_trip_stream(request: TravelRequest):
             for node, data in event.items():
 
                 if node == "destination":
-                    yield "📍 Destination Agent completed...\n"
-
+                    yield "🤖 Destination Agent: Finding the perfect destination...\n"
                 elif node == "budget":
-                    yield "💰 Budget Agent completed...\n"
+                   yield "💰 Budget Agent: Calculating your budget...\n"
 
                 elif node == "weather":
-                    yield "🌤 Weather Agent completed...\n"
+                    yield "🌤 Weather Agent: Checking weather conditions...\n"
 
                 elif node == "activities":
-                    yield "🎯 Activity Agent completed...\n"
-
+                    yield "🎯 Activity Agent: Selecting exciting activities...\n"
                 elif node == "itinerary":
-                    yield "📅 Itinerary Agent completed...\n"
-
+                    yield "🗓 Itinerary Agent: Building your itinerary...\n"
 
                 await asyncio.sleep(0.5)
 
 
-        yield "✅ All AI Agents completed 🚀\n"
+        yield "VoyageAI: Your personalized trip is ready! 🎉\n"
 
 
     return StreamingResponse(
