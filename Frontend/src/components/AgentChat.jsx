@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import TypingMessage from "./TypingMessage";
 
 function AgentChat({ messages }) {
 
@@ -81,11 +82,9 @@ function AgentChat({ messages }) {
 
               </div>
 
-              <p className="mt-2 text-gray-700">
-
-                {msg}
-
-              </p>
+              <div className="mt-2">
+  <TypingMessage text={msg} />
+</div>
 
             </motion.div>
 
