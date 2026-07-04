@@ -1,5 +1,7 @@
 import json
-from app.config import llm
+from app.config import get_llm
+
+llm = get_llm()
 
 
 def itinerary_agent(state):

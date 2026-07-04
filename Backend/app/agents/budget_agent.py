@@ -1,4 +1,6 @@
-from app.config import llm
+from app.config import get_llm
+
+llm = get_llm()
 
 
 def budget_agent(state):
