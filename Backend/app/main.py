@@ -114,25 +114,50 @@ async def plan_trip_stream(request: TravelRequest):
 
         yield "🚀 VoyageAI started...\n"
 
+    for event in travel_graph.stream(initial_state):
 
-        for event in travel_graph.stream(initial_state):
+        for node, data in event.items():
 
-            for node, data in event.items():
+            if node == "destination":
 
-                if node == "destination":
-                    yield "🤖 Destination Agent: Finding the perfect destination...\n"
-                elif node == "budget":
-                   yield "💰 Budget Agent: Calculating your budget...\n"
+                yield (
+                    "🧭 Destination Agent\n\n"
+                    + data["destination"]
+                    + "\n\n"
+                )
 
-                elif node == "weather":
-                    yield "🌤 Weather Agent: Checking weather conditions...\n"
+            elif node == "budget":
 
-                elif node == "activities":
-                    yield "🎯 Activity Agent: Selecting exciting activities...\n"
-                elif node == "itinerary":
-                    yield "🗓 Itinerary Agent: Building your itinerary...\n"
+                yield (
+                    "💰 Budget Agent\n\n"
+                    + data["budget"]
+                    + "\n\n"
+                )
 
-                await asyncio.sleep(0.5)
+            elif node == "weather":
+
+                yield (
+                    "☀️ Weather Agent\n\n"
+                    + str(data["weather"])
+                    + "\n\n"
+                )
+
+            elif node == "activities":
+
+                yield (
+                    "🎯 Activity Agent\n\n"
+                    + data["activities"]
+                    + "\n\n"
+                )
+
+            elif node == "itinerary":
+
+                yield (
+                    "🗓️ Itinerary Agent\n\n"
+                    "Creating Final Plan...\n\n"
+                )
+
+        await asyncio.sleep(1)
 
 
         yield "VoyageAI: Your personalized trip is ready! 🎉\n"
