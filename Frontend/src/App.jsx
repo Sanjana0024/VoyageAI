@@ -7,8 +7,10 @@ import TravelCard from "./components/TravelCard";
 import HistorySidebar from "./components/HistorySidebar";
 import AgentChat from "./components/AgentChat";
 import MapView from "./components/MapView";
+import Login from "./components/Login";
 
 function App() {
+  const [user, setUser] = useState(null);
 
   const [input, setInput] = useState("");
 
@@ -141,8 +143,10 @@ function App() {
     setMessages([]);
 
   };
+    if (!user) {
+  return <Login setUser={setUser} />;
+}
     return (
-
     <div className="min-h-screen flex bg-gradient-to-br from-slate-100 via-blue-50 to-purple-100">
 
       {/* Sidebar */}
@@ -244,10 +248,7 @@ function App() {
 
             <div className="mt-8">
 
-              <AgentChat 
-  messages={messages}
-  onDeleteMessage={deleteMessage}
-/>
+              <AgentChat messages={messages} onDeleteMessage={deleteMessage} />
 
             </div>
 
