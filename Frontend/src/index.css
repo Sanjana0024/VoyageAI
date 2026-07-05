@@ -8,3 +8,8 @@ body {
   background:#f8fafc;
 
 }
+#map {
+  height: 400px;
+  width: 100%;
+  border-radius: 16px;
+}

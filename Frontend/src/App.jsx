@@ -6,6 +6,7 @@ import { streamTrip } from "./services/stream";
 import TravelCard from "./components/TravelCard";
 import HistorySidebar from "./components/HistorySidebar";
 import AgentChat from "./components/AgentChat";
+import MapView from "./components/MapView";
 
 function App() {
 
@@ -14,6 +15,9 @@ function App() {
   const [trip, setTrip] = useState(null);
 
   const [messages, setMessages] = useState([]);
+
+  const deleteMessage = (index) => {setMessages((prev) => prev.filter((_, i) => i !== index));
+};
 
   const [loading, setLoading] = useState(false);
 
@@ -240,11 +244,10 @@ function App() {
 
             <div className="mt-8">
 
-              <AgentChat
-
-                messages={messages}
-
-              />
+              <AgentChat 
+  messages={messages}
+  onDeleteMessage={deleteMessage}
+/>
 
             </div>
 
@@ -259,6 +262,8 @@ function App() {
             loading={loading}
 
           />
+          {/* Map */}
+          <MapView />
 
         </div>
 
@@ -267,7 +272,6 @@ function App() {
     </div>
 
   );
-
 }
 
 export default App;

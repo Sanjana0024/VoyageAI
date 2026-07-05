@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import TypingMessage from "./TypingMessage";
 
-function AgentChat({ messages }) {
+function AgentChat({ messages, onDeleteMessage })  {
 
   return (
 
@@ -34,62 +34,44 @@ function AgentChat({ messages }) {
           )}
 
           {messages.map((msg, index) => (
+  <motion.div
+    key={index}
+    initial={{ opacity: 0, x: -30 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.4 }}
+    className="bg-gray-50 rounded-2xl p-4 border border-gray-200 shadow-sm"
+  >
+    <div className="flex justify-between">
 
-            <motion.div
+      <span className="font-semibold text-blue-600">
+        {msg.includes("Destination") && "🧭 Destination Agent"}
+        {msg.includes("Budget") && "💰 Budget Agent"}
+        {msg.includes("Weather") && "☀️ Weather Agent"}
+        {msg.includes("Activity") && "🎯 Activity Agent"}
+        {msg.includes("Itinerary") && "🗓️ Itinerary Agent"}
+        {msg.includes("VoyageAI") && "🚀 VoyageAI"}
+      </span>
 
-              key={index}
+      <span className="text-xs text-gray-400">
+        just now
+      </span>
 
-              initial={{ opacity: 0, x: -30 }}
+    </div>
 
-              animate={{ opacity: 1, x: 0 }}
+    <div className="mt-2">
+      <TypingMessage text={msg} />
+    </div>
 
-              transition={{ duration: 0.4 }}
+    {/* ✅ DELETE BUTTON ADDED HERE */}
+    <button
+      onClick={() => onDeleteMessage(index)}
+      className="mt-3 text-sm text-red-500 hover:text-red-700"
+    >
+      Delete
+    </button>
 
-              className="
-              bg-gray-50
-              rounded-2xl
-              p-4
-              border
-              border-gray-200
-              shadow-sm
-              "
-
-            >
-
-              <div className="flex justify-between">
-
-                <span className="font-semibold text-blue-600">
-
-  {msg.includes("Destination") && "🧭 Destination Agent"}
-
-  {msg.includes("Budget") && "💰 Budget Agent"}
-
-  {msg.includes("Weather") && "☀️ Weather Agent"}
-
-  {msg.includes("Activity") && "🎯 Activity Agent"}
-
-  {msg.includes("Itinerary") && "🗓️ Itinerary Agent"}
-
-  {msg.includes("VoyageAI") && "🚀 VoyageAI"}
-
-</span>
-
-                <span className="text-xs text-gray-400">
-
-                  just now
-
-                </span>
-
-              </div>
-
-              <div className="mt-2">
-  <TypingMessage text={msg} />
-</div>
-
-            </motion.div>
-
-          ))}
-
+  </motion.div>
+))}
         </div>
 
       </div>
