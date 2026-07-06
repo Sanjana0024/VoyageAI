@@ -8,6 +8,8 @@ import HistorySidebar from "./components/HistorySidebar";
 import AgentChat from "./components/AgentChat";
 import MapView from "./components/MapView";
 import Login from "./components/Login";
+import { db } from "./firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -24,6 +26,42 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   const [history, setHistory] = useState([]);
+
+  const saveMessages = async (messages, userId) => {
+  try {
+    await setDoc(doc(db, "chats", userId), {
+      messages: messages,
+      updatedAt: new Date()
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+useEffect(() => {
+  if (user && messages.length > 0) {
+    saveMessages(messages, user.uid);
+  }
+}, [messages, user]);
+
+const loadMessages = async (userId) => {
+  const docRef = doc(db, "chats", userId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+  const data = docSnap.data();
+
+  if (data.messages) {
+    setMessages(data.messages);
+  }
+}
+};
+
+useEffect(() => {
+  if (user) {
+    loadMessages(user.uid);
+  }
+}, [user]);
 
 
   // Load history
